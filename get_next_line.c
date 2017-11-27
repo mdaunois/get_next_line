@@ -19,7 +19,7 @@
 */
 char	*get_file_content(int fd)
 {
-	char	buf[BUF_SIZE + 1];
+	char	buf[BUFF_SIZE + 1];
 	static char *rest;
 	int		ret;
 	char	*tab1;
@@ -27,16 +27,15 @@ char	*get_file_content(int fd)
 	int		len;
 	int		i;
 	int 	j;
+	int fin;
 
+	fin = 0;
 	j = 1;
-	len = BUF_SIZE;
+	len = BUFF_SIZE;
 	tab2 = 0;
 	if (rest != 0)
-	{	
-	//	printf("le rest est %s\n", rest);
 		tab2 = ft_strdup(rest);
-	}
-	while ((ret = read(fd, buf, BUF_SIZE)))
+	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
 		i = 0;
 		if (ret == -1)
@@ -51,17 +50,23 @@ char	*get_file_content(int fd)
 			return (0);
 		tab2 = ft_strcpy(tab2, tab1);
 		free(tab1);
+		printf("ret = %d\n", ret);
 		while (buf[i])
 		{
-			if (buf[i] == '\n')
+			if (buf[i] == '\n' || buf[i] == '\0')
 			{
+				ret = ret - i;
+				printf("ret apres = %d\n", ret);
 				tab2 = ft_strncat(tab2, buf, (size_t)i);
+				while (buf[i + j] != '\0')
+				{
+					if (buf[i + j] == '\n')
+						return (tab2);
+					j++;
+				}
 				if (!(rest = malloc(sizeof(char) * (len + 1))))
 					return (0);
-			//	while (buf[i + j] != '\0' || buf[i + j] != '\n')
-			//		j++;
 				rest = ft_strcpy(rest, &buf[i + 1]);
-			//	printf("1er rest :%s\n", rest);
 				return (tab2);
 			}
 			i++;
@@ -73,6 +78,8 @@ char	*get_file_content(int fd)
 
 int get_next_line(const int fd, char **line)
 {
+	if (fd < 0)
+		return (-1);
 	*line = get_file_content(fd);
 	if (ft_strlen(*line) > 0)
 	{
