@@ -17,6 +17,31 @@
 	
 }
 */
+char	*ft_strndup(const char *s1, int size)
+{
+	int		i;
+	int		len;
+	char	*ret;
+
+	i = 0;
+	len = 0;
+	while (s1[len])
+	{
+		len++;
+	}
+	if (size > len)
+		return (0);
+	if (!(ret = (char*)malloc(sizeof(char) * (size))))
+		return (0);
+	while (i < size)
+	{
+		ret[i] = s1[i];
+		i++;
+	}
+	ret[i] = '\0';
+	return (ret);
+}
+
 char	*get_file_content(int fd)
 {
 	char	buf[BUFF_SIZE + 1];
@@ -26,17 +51,28 @@ char	*get_file_content(int fd)
 	char	*tab2;
 	int		len;
 	int		i;
-	int 	j;
-	int fin;
 
-	fin = 0;
-	j = 1;
+	i = 0;
 	len = BUFF_SIZE;
 	tab2 = 0;
-	if (rest != 0)
-		tab2 = ft_strdup(rest);
+	if (rest)
+	{
+	//printf("le rest est = %s //fin du rest\n", rest);
+		while (rest[i])
+		{
+			if (rest[i] == '\n' || rest[i] == '\0')
+			{
+				tab2 = ft_strndup(rest, i);
+				if (rest[i] != '\0')
+					rest = ft_strdup(&rest[i + 1]);
+				return (tab2);
+			}
+			i++;
+		}
+	}
 	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
+//		printf("TOTO\n");
 		i = 0;
 		if (ret == -1)
 			return (0);
@@ -50,23 +86,13 @@ char	*get_file_content(int fd)
 			return (0);
 		tab2 = ft_strcpy(tab2, tab1);
 		free(tab1);
-		printf("ret = %d\n", ret);
 		while (buf[i])
 		{
 			if (buf[i] == '\n' || buf[i] == '\0')
 			{
-				ret = ret - i;
-				printf("ret apres = %d\n", ret);
 				tab2 = ft_strncat(tab2, buf, (size_t)i);
-				while (buf[i + j] != '\0')
-				{
-					if (buf[i + j] == '\n')
-						return (tab2);
-					j++;
-				}
-				if (!(rest = malloc(sizeof(char) * (len + 1))))
-					return (0);
-				rest = ft_strcpy(rest, &buf[i + 1]);
+				rest = ft_strdup(&buf[i + 1]);
+				//printf("le rest est = %s\n", rest);
 				return (tab2);
 			}
 			i++;
@@ -81,16 +107,16 @@ int get_next_line(const int fd, char **line)
 	if (fd < 0)
 		return (-1);
 	*line = get_file_content(fd);
-	if (ft_strlen(*line) > 0)
+	if (*line != 0)
 	{
-		printf("%s\n", *line);
+//		printf("%s\n", *line);
 		return (1);
 	}
 	else 
 		return (0);
 	return (-1);
 }
-
+/*
 int main(int argc, char *argv[])
 {
 	int fd;
@@ -111,4 +137,7 @@ int main(int argc, char *argv[])
 		printf("%d\n", val);
 
 	}
-}
+	else
+		printf("erreur");
+	return (0);
+}*/
