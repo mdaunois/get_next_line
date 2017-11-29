@@ -60,14 +60,15 @@ char	*get_file_content(int fd)
 	//printf("le rest est = %s //fin du rest\n", rest);
 		while (rest[i])
 		{
-			if (rest[i] == '\n' || rest[i] == '\0')
+			i++;
+			if (rest[i] == '\0' || rest[i] == '\n')
 			{
 				tab2 = ft_strndup(rest, i);
-				if (rest[i] != '\0')
+			//	if (rest[i] != '\0')
 					rest = ft_strdup(&rest[i + 1]);
 				return (tab2);
 			}
-			i++;
+			//i++;
 		}
 	}
 	while ((ret = read(fd, buf, BUFF_SIZE)))
@@ -88,7 +89,7 @@ char	*get_file_content(int fd)
 		free(tab1);
 		while (buf[i])
 		{
-			if (buf[i] == '\n' || buf[i] == '\0')
+			if (buf[i] == '\0' || buf[i] == '\n')
 			{
 				tab2 = ft_strncat(tab2, buf, (size_t)i);
 				rest = ft_strdup(&buf[i + 1]);
@@ -109,14 +110,14 @@ int get_next_line(const int fd, char **line)
 	*line = get_file_content(fd);
 	if (*line != 0)
 	{
-//		printf("%s\n", *line);
+		printf("%s\n", *line);
 		return (1);
 	}
 	else 
 		return (0);
 	return (-1);
 }
-/*
+
 int main(int argc, char *argv[])
 {
 	int fd;
@@ -140,4 +141,4 @@ int main(int argc, char *argv[])
 	else
 		printf("erreur");
 	return (0);
-}*/
+}
