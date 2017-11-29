@@ -6,7 +6,7 @@
 /*   By: mdaunois <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/27 13:35:29 by mdaunois          #+#    #+#             */
-/*   Updated: 2017/11/27 17:37:50 by mdaunois         ###   ########.fr       */
+/*   Updated: 2017/11/29 12:27:24 by mdaunois         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char	*get_file_content(int fd)
 	tab2 = 0;
 	if (rest)
 	{
-	//printf("le rest est = %s //fin du rest\n", rest);
+	printf("Le rest est = %s\n", rest);
 		while (rest[i])
 		{
 			i++;
@@ -65,7 +65,7 @@ char	*get_file_content(int fd)
 			{
 				tab2 = ft_strndup(rest, i);
 			//	if (rest[i] != '\0')
-					rest = ft_strdup(&rest[i + 1]);
+				rest = ft_strdup(&rest[i + 1]);
 				return (tab2);
 			}
 			//i++;
@@ -87,13 +87,16 @@ char	*get_file_content(int fd)
 			return (0);
 		tab2 = ft_strcpy(tab2, tab1);
 		free(tab1);
+		//printf("le rest est = %s\n", rest);
 		while (buf[i])
 		{
 			if (buf[i] == '\0' || buf[i] == '\n')
 			{
 				tab2 = ft_strncat(tab2, buf, (size_t)i);
+				if(rest && rest[0] != '\n')
+					tab2 = ft_strcat(rest, tab2);
 				rest = ft_strdup(&buf[i + 1]);
-				//printf("le rest est = %s\n", rest);
+				printf("le rest est = %s\n", rest);
 				return (tab2);
 			}
 			i++;
@@ -105,7 +108,7 @@ char	*get_file_content(int fd)
 
 int get_next_line(const int fd, char **line)
 {
-	if (fd < 0)
+	if (fd < 0 || fd == 1 || fd == 2)
 		return (-1);
 	*line = get_file_content(fd);
 	if (*line != 0)
