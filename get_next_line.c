@@ -6,17 +6,12 @@
 /*   By: mdaunois <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/27 13:35:29 by mdaunois          #+#    #+#             */
-/*   Updated: 2017/11/30 13:43:37 by mdaunois         ###   ########.fr       */
+/*   Updated: 2017/11/30 17:07:01 by mdaunois         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-/*void	stopifendl(char *tab2, char *buf)
-{
-	
-}
-*/
 char	*ft_strndup(const char *s1, int size)
 {
 	int		i;
@@ -39,56 +34,29 @@ char	*ft_strndup(const char *s1, int size)
 		i++;
 	}
 	ret[i] = '\0';
+//	printf("dans strlen = %s\n", ret);
 	return (ret);
 }
 
 int		get_file_content(int fd, char **tab2, char **rest)
 {
 	char	buf[BUFF_SIZE + 1];
-//	static char *rest;
 	int		ret;
 	char	*tab1;
 	int		len;
 	int		i;
 
-	i = 0;
 	len = BUFF_SIZE;
-	tab1 = 0;
-/*		printf("tab1 = %s\n", tab1);
-		printf("tab2 = %s\n", *tab2);
-		printf("rest = %s\n", *rest);
-	if (ft_strlen(rest))
-	{
-		while (rest[i])
-		{
-			if (rest[i] == '\n')
-			{
-				tab2 = ft_strndup(rest, i);
-					rest = ft_strdup(&rest[i + 1]);
-				return (tab2);
-			}
-			i++;
-		}
-		if (rest && !tab2)
-		{
-			tab2 = ft_strdup(rest);
-			rest = NULL;
-		}
-	}
-*/	while ((ret = read(fd, buf, BUFF_SIZE)))
+	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
 		i = 0;
-		if (ret == -1)
+		if (ret == -1 || !(tab1 = malloc(sizeof(char) * (len + 1))))
 			return (-1);
 		buf[ret] = '\0';
-		if (!(tab1 = malloc(sizeof(char) * (len + 1))))
-			return (-1);
-		if (*rest && !tab2)
+		if (*rest && !*tab2)
 			*tab2 = ft_strdup(*rest);
 		if (*tab2)
-		{
 			tab1 = *tab2;
-		}
 		len += ret;
 		if (!(*tab2 = malloc(sizeof(char) * (len + 1))))
 			return (-1);
@@ -99,40 +67,42 @@ int		get_file_content(int fd, char **tab2, char **rest)
 			if (buf[i] == '\n')
 			{
 				*tab2 = ft_strncat(*tab2, buf, (size_t)i);
-				if (buf[i + 1])
+//				if (buf[i + 1])
 					*rest = ft_strdup(&buf[i + 1]);
+//				printf("-%s\n", *tab2);
 				return (1);
 			}
 			i++;
 		}
 		*tab2 = ft_strcat(*tab2, buf);
 	}
+//	printf("---%s\n", *tab2);
 	if (*tab2)
 		return (1);
-	else
-		return (0);
+	return (0);
 }
 
-int get_next_line(const int fd, char **line)
+int		get_next_line(const int fd, char **line)
 {
-	static char *rest;
-	int i;
-	int val;
+	static char	*rest;
+	int			i;
+	//char 		*temp;
 
-	i = 0;
-	if (fd < 0 || fd == 1 || fd == 2)
+	if (fd < 0 || fd == 1 || fd == 2 || line == NULL)
 		return (-1);
-	if (*line)
-		ft_strdel(line);
+	*line = NULL;
 	if (ft_strlen(rest))
 	{
+		i = 0;
 		while (rest[i])
 		{
 			if (rest[i] == '\n')
 			{
+//				printf("--%s\n", *line);
 				*line = ft_strndup(rest, i);
+//				printf("--%s\n", *line);
 				rest = ft_strdup(&rest[i + 1]);
-//		printf("-------------\n%s\n--------------\n", *line);
+//				printf("--%s\n", *line);
 				return (1);
 			}
 			i++;
@@ -143,19 +113,7 @@ int get_next_line(const int fd, char **line)
 			rest = NULL;
 		}
 	}
-//	if (!*line)
-		val = get_file_content(fd, line, &rest);
-//	else
-//		*line = strcat(*line, get_file_content(fd, &rest));
-//	printf("TEST\n");
-//	if (val == 1)
-//	{
-//		printf("----\n%s\n----\n", *line);
-		return (val);
-//	}
-//	else 
-//		return (0);
-//	return (-1);
+	return (get_file_content(fd, line, &rest));
 }
 /*
 int main(int argc, char *argv[])
@@ -168,6 +126,14 @@ int main(int argc, char *argv[])
 	fd = open(argv[1], O_RDONLY);
 	if (fd > -1)
 	{
+		val = get_next_line(fd, &content);
+		printf("%d\n", val);
+		val = get_next_line(fd, &content);
+		printf("%d\n", val);
+		val = get_next_line(fd, &content);
+		printf("%d\n", val);
+		val = get_next_line(fd, &content);
+		printf("%d\n", val);
 		val = get_next_line(fd, &content);
 		printf("%d\n", val);
 		val = get_next_line(fd, &content);
