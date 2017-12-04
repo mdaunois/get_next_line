@@ -6,7 +6,7 @@
 /*   By: mdaunois <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/27 13:35:29 by mdaunois          #+#    #+#             */
-/*   Updated: 2017/11/30 17:07:01 by mdaunois         ###   ########.fr       */
+/*   Updated: 2017/12/04 12:57:59 by mdaunois         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,10 @@ char	*ft_strndup(const char *s1, int size)
 	i = 0;
 	len = 0;
 	while (s1[len])
-	{
 		len++;
-	}
 	if (size > len)
 		return (0);
-	if (!(ret = (char*)malloc(sizeof(char) * (size))))
+	if (!(ret = (char*)malloc(sizeof(char) * (size + 1))))
 		return (0);
 	while (i < size)
 	{
