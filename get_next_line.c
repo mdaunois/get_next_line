@@ -6,7 +6,7 @@
 /*   By: mdaunois <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/27 13:35:29 by mdaunois          #+#    #+#             */
-/*   Updated: 2017/12/04 12:57:59 by mdaunois         ###   ########.fr       */
+/*   Updated: 2017/12/04 14:03:06 by mdaunois         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,10 @@ int		get_file_content(int fd, char **tab2, char **rest)
 	len = BUFF_SIZE;
 	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
-		i = 0;
+		i = -1;
 		if (ret == -1 || !(tab1 = malloc(sizeof(char) * (len + 1))))
 			return (-1);
 		buf[ret] = '\0';
-		if (*rest && !*tab2)
-			*tab2 = ft_strdup(*rest);
 		if (*tab2)
 			tab1 = *tab2;
 		len += ret;
@@ -60,21 +58,17 @@ int		get_file_content(int fd, char **tab2, char **rest)
 			return (-1);
 		*tab2 = ft_strcpy(*tab2, tab1);
 		free(tab1);
-		while (buf[i])
-		{
+		while (buf[++i])
 			if (buf[i] == '\n')
 			{
 				*tab2 = ft_strncat(*tab2, buf, (size_t)i);
-//				if (buf[i + 1])
-					*rest = ft_strdup(&buf[i + 1]);
-//				printf("-%s\n", *tab2);
+				*rest = ft_strdup(&buf[i + 1]);
+//				printf("%s\n", *tab2);
 				return (1);
 			}
-			i++;
-		}
 		*tab2 = ft_strcat(*tab2, buf);
 	}
-//	printf("---%s\n", *tab2);
+//	printf("%s\n", *tab2);
 	if (*tab2)
 		return (1);
 	return (0);
@@ -82,29 +76,23 @@ int		get_file_content(int fd, char **tab2, char **rest)
 
 int		get_next_line(const int fd, char **line)
 {
-	static char	*rest;
+	static char	*rest = NULL;
 	int			i;
-	//char 		*temp;
 
 	if (fd < 0 || fd == 1 || fd == 2 || line == NULL)
 		return (-1);
 	*line = NULL;
 	if (ft_strlen(rest))
 	{
-		i = 0;
-		while (rest[i])
-		{
+		i = -1;
+		while (rest[++i])
 			if (rest[i] == '\n')
 			{
-//				printf("--%s\n", *line);
 				*line = ft_strndup(rest, i);
-//				printf("--%s\n", *line);
 				rest = ft_strdup(&rest[i + 1]);
-//				printf("--%s\n", *line);
+//				printf("%s\n", *line);
 				return (1);
 			}
-			i++;
-		}
 		if (rest && !(*line))
 		{
 			*line = ft_strdup(rest);
