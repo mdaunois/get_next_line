@@ -41,20 +41,19 @@ int		get_file_content(int fd, char **tab2, char **rest)
 	char	buf[BUFF_SIZE + 1];
 	int		ret;
 	char	*tab1;
-	int		len;
 	int		i;
 
-	len = BUFF_SIZE;
 	while ((ret = read(fd, buf, BUFF_SIZE)))
 	{
 		i = -1;
-		if (ret == -1 || !(tab1 = malloc(sizeof(char) * (len + 1))))
+		if (ret == -1 || !(tab1 = malloc(sizeof(char) * ft_strlen(buf + 1))))
 			return (-1);
 		buf[ret] = '\0';
 		if (*tab2)
+		{
 			tab1 = *tab2;
-		len += ret;
-		if (!(*tab2 = malloc(sizeof(char) * (len + 1))))
+		}
+		if (!(*tab2 = malloc(sizeof(char) * (ft_strlen(tab1) + ft_strlen(buf) + 1))))
 			return (-1);
 		*tab2 = ft_strcpy(*tab2, tab1);
 		free(tab1);
